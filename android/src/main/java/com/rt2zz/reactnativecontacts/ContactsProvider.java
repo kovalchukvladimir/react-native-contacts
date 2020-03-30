@@ -87,7 +87,7 @@ public class ContactsProvider {
     }
 
     public WritableArray getContactsMatchingString(String searchString) {
-        Map<String, Contact> matchingContacts;
+        Map<String, Contact> matchingContacts = null;
         {
             Cursor cursor = contentResolver.query(
                     ContactsContract.Data.CONTENT_URI,
@@ -100,6 +100,8 @@ public class ContactsProvider {
 
             try {
                 matchingContacts = loadContactsFrom(cursor);
+            } catch (Throwable e) {
+                Log.w("getContactsMatchingString", e.toString());
             } finally {
                 if (cursor != null) {
                     cursor.close();
@@ -108,15 +110,17 @@ public class ContactsProvider {
         }
 
         WritableArray contacts = Arguments.createArray();
-        for (Contact contact : matchingContacts.values()) {
-            contacts.pushMap(contact.toMap());
+        if (matchingContacts != null) {
+            for (Contact contact : matchingContacts.values()) {
+                contacts.pushMap(contact.toMap());
+            }
         }
         return contacts;
     }
 
 
     public WritableArray getContactsByPhoneNumber(String phoneNumber) {
-        Map<String, Contact> matchingContacts;
+        Map<String, Contact> matchingContacts = null;
         {
             Cursor cursor = contentResolver.query(
                     ContactsContract.Data.CONTENT_URI,
@@ -129,6 +133,8 @@ public class ContactsProvider {
 
             try {
                 matchingContacts = loadContactsFrom(cursor);
+            } catch (Throwable e) {
+                Log.w("getContactsByPhoneNumber", e.toString());
             } finally {
                 if (cursor != null) {
                     cursor.close();
@@ -137,14 +143,16 @@ public class ContactsProvider {
         }
 
         WritableArray contacts = Arguments.createArray();
-        for (Contact contact : matchingContacts.values()) {
-            contacts.pushMap(contact.toMap());
+        if (matchingContacts != null) {
+            for (Contact contact : matchingContacts.values()) {
+                contacts.pushMap(contact.toMap());
+            }
         }
         return contacts;
     }
 
     public WritableArray getContactsByEmailAddress(String emailAddress) {
-        Map<String, Contact> matchingContacts;
+        Map<String, Contact> matchingContacts = null;
         {
             Cursor cursor = contentResolver.query(
                     ContactsContract.Data.CONTENT_URI,
@@ -156,6 +164,8 @@ public class ContactsProvider {
 
             try {
                 matchingContacts = loadContactsFrom(cursor);
+            } catch (Throwable e) {
+                Log.w("getContactsByEmailAddress", e.toString());
             } finally {
                 if (cursor != null) {
                     cursor.close();
@@ -164,8 +174,10 @@ public class ContactsProvider {
         }
 
         WritableArray contacts = Arguments.createArray();
-        for (Contact contact : matchingContacts.values()) {
-            contacts.pushMap(contact.toMap());
+        if (matchingContacts != null) {
+            for (Contact contact : matchingContacts.values()) {
+                contacts.pushMap(contact.toMap());
+            }
         }
         return contacts;
     }
@@ -200,7 +212,7 @@ public class ContactsProvider {
 
     public WritableMap getContactById(String contactId) {
 
-        Map<String, Contact> matchingContacts;
+        Map<String, Contact> matchingContacts = null;
         {
             Cursor cursor = contentResolver.query(
                 ContactsContract.Data.CONTENT_URI,
@@ -212,6 +224,8 @@ public class ContactsProvider {
 
             try {
                 matchingContacts = loadContactsFrom(cursor);
+            } catch (Throwable e) {
+                Log.w("getContactById", e.toString());
             } finally {
                 if (cursor != null) {
                     cursor.close();
@@ -219,8 +233,10 @@ public class ContactsProvider {
             }
         }
 
-        if(matchingContacts.values().size() > 0) {
-            return matchingContacts.values().iterator().next().toMap();
+        if (matchingContacts != null) {
+            if(matchingContacts.values().size() > 0) {
+                return matchingContacts.values().iterator().next().toMap();
+            }
         }
 
        return null;
@@ -234,7 +250,7 @@ public class ContactsProvider {
     }
 
     public WritableArray getContacts() {
-        Map<String, Contact> justMe;
+        Map<String, Contact> justMe = null;
         {
             Cursor cursor = contentResolver.query(
                     Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI, ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
@@ -246,6 +262,8 @@ public class ContactsProvider {
 
             try {
                 justMe = loadContactsFrom(cursor);
+            } catch (Throwable e) {
+                Log.w("getContacts justMe", e.toString());
             } finally {
                 if (cursor != null) {
                     cursor.close();
@@ -253,7 +271,7 @@ public class ContactsProvider {
             }
         }
 
-        Map<String, Contact> everyoneElse;
+        Map<String, Contact> everyoneElse = null;
         {
             Cursor cursor = contentResolver.query(
                     ContactsContract.Data.CONTENT_URI,
@@ -281,6 +299,8 @@ public class ContactsProvider {
 
             try {
                 everyoneElse = loadContactsFrom(cursor);
+            } catch (Throwable e) {
+                Log.w("getContacts everyoneElse", e.toString());
             } finally {
                 if (cursor != null) {
                     cursor.close();
@@ -289,11 +309,15 @@ public class ContactsProvider {
         }
 
         WritableArray contacts = Arguments.createArray();
-        for (Contact contact : justMe.values()) {
-            contacts.pushMap(contact.toMap());
+        if (justMe != null) {
+            for (Contact contact : justMe.values()) {
+                contacts.pushMap(contact.toMap());
+            }
         }
-        for (Contact contact : everyoneElse.values()) {
-            contacts.pushMap(contact.toMap());
+        if (everyoneElse != null) {
+            for (Contact contact : everyoneElse.values()) {
+                contacts.pushMap(contact.toMap());
+            }
         }
 
         return contacts;
